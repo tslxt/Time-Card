@@ -30,9 +30,17 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.JsonHttpResponseHandler;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import cz.msebera.android.httpclient.Header;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -53,6 +61,7 @@ public class LoginActivity extends AppCompatActivity {
     private static final String[] DUMMY_CREDENTIALS = new String[]{
             "18601199806:hello", "13000000000:world"
     };
+    private static final String TAG = "TSLXT";
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
@@ -72,31 +81,31 @@ public class LoginActivity extends AppCompatActivity {
         mPhoneView = (AutoCompleteTextView) findViewById(R.id.phone);
 
 
-        Intent intent = new Intent(LoginActivity.this, MyCourseActivity.class);
-        startActivity(intent);
+//        Intent intent = new Intent(LoginActivity.this, MyCourseActivity.class);
+//        startActivity(intent);
 
-//        mPasswordView = (EditText) findViewById(R.id.password);
-//        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-//            @Override
-//            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-//                if (id == R.id.login || id == EditorInfo.IME_NULL) {
-//                    attemptLogin();
-//                    return true;
-//                }
-//                return false;
-//            }
-//        });
-//
-//        Button mSignInButton = (Button) findViewById(R.id.sign_in_button);
-//        mSignInButton.setOnClickListener(new OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                attemptLogin();
-//            }
-//        });
-//
-//        mLoginFormView = findViewById(R.id.login_form);
-//        mProgressView = findViewById(R.id.login_progress);
+        mPasswordView = (EditText) findViewById(R.id.password);
+        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
+                if (id == R.id.login || id == EditorInfo.IME_NULL) {
+                    attemptLogin();
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        Button mSignInButton = (Button) findViewById(R.id.sign_in_button);
+        mSignInButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                attemptLogin();
+            }
+        });
+
+        mLoginFormView = findViewById(R.id.login_form);
+        mProgressView = findViewById(R.id.login_progress);
     }
 
     /**
@@ -164,8 +173,30 @@ public class LoginActivity extends AppCompatActivity {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            mAuthTask = new UserLoginTask(phone, password);
-            mAuthTask.execute((Void) null);
+//            mAuthTask = new UserLoginTask(phone, password);
+//            mAuthTask.execute((Void) null);
+            String url = ConfigApp.SERVER + ConfigApp.LOGIN_API;
+
+            AsyncHttpClient client = new AsyncHttpClient();
+
+            client.get(url, new JsonHttpResponseHandler() {
+
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                    Log.d(TAG, "onSuccess: " + statusCode);
+                    showProgress(false);
+//                    mPasswordView.setError(getString(R.string.error_incorrect_password));
+//                    mPasswordView.requestFocus();
+
+//                    mPhoneView.setError(getString(R.string.error_invalid_phone));
+//                    mPhoneView.requestFocus();
+
+//                    Toast.makeText(LoginActivity.this, "登录状态:  " + statusCode, Toast.LENGTH_SHORT).show();
+
+                }
+            });
+
+
         }
     }
 
@@ -236,6 +267,7 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Void... params) {
+
             // TODO: attempt authentication against a network service.
 
             try {
