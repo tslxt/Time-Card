@@ -11,12 +11,20 @@ import android.view.View;
 import android.widget.ListView;
 
 import com.google.zxing.Result;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.JsonHttpResponseHandler;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import cz.msebera.android.httpclient.Header;
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
 public class ClassRoomActivity extends AppCompatActivity {
@@ -29,9 +37,13 @@ public class ClassRoomActivity extends AppCompatActivity {
     private static final int LEFT_REQEUST = 0;
 
     public static final String RETURN_BARCODE = "RETURN_BARCODE";
+    private static final String TAG = "tslxt_classroom";
 
-    private ArrayList<Student> students = getStudents();
+    //    private ArrayList<Student> students = getStudents();
+    private ArrayList<Student> students = new ArrayList<>();
     private StudentListAdapter adapter;
+
+    public String courseId = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,10 +53,12 @@ public class ClassRoomActivity extends AppCompatActivity {
 
 
 
-        String courseId = getIntent().getStringExtra(MyCourseActivity.COURSE_ID);
+        courseId = getIntent().getStringExtra(MyCourseActivity.COURSE_ID);
         Course course = DataProvider.courseMap.get(courseId);
+        students = course.getStudents();
+        toolbar.setTitle(course.getCourseName());
 
-        toolbar.setTitle(course.getTitleCoruse());
+
         setSupportActionBar(toolbar);
 
         adapter = new StudentListAdapter(
@@ -73,18 +87,7 @@ public class ClassRoomActivity extends AppCompatActivity {
             }
         });
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    }
-
-    private ArrayList<Student> getStudents() {
-        ArrayList<Student> listStu = new ArrayList<Student>();
-        Student stu1 = new Student("12323","庄韪菱", "", "");
-        listStu.add(stu1);
-        Student stu2 = new Student("2899750","吴兢","","");
-        listStu.add(stu2);
-        Student stu3 = new Student("395","张鸿飞","","");
-        listStu.add(stu3);
-        return listStu;
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
@@ -103,15 +106,64 @@ public class ClassRoomActivity extends AppCompatActivity {
                     }
                 }
 
+
+
 //            Log.d("for loop", "position " + position);
 
                 if (position != -1) {
-                    Date date = new Date();
-                    SimpleDateFormat dateformatter = new SimpleDateFormat("HH:mm:ss");
-                    adapter.getItem(position).setTimePresent(dateformatter.format(date));
-                    adapter.notifyDataSetChanged();
-                    Snackbar.make(findViewById(R.id.listStudentView), adapter.getItem(position).getStudentName() + " 签到成功", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                    final Date date = new Date();
+                    final SimpleDateFormat hmsformatter = new SimpleDateFormat("HH:mm:ss");
+                    SimpleDateFormat dateformatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+                    String url = ConfigApp.SERVER + ConfigApp.CHECKIN_API;
+                    url += "?";
+                    url += "stdid=" + adapter.getItem(position).getStudentId();
+                    url += "&";
+                    url += "clid=" + courseId;
+                    url += "&";
+                    url += "status=" + 0;
+                    url += "&";
+                    url += "datetime=" + dateformatter.format(date);
+
+                    Log.d(TAG, "post: " + url);
+
+
+                    AsyncHttpClient client = new AsyncHttpClient();
+
+                    final int finalPosition = position;
+                    client.get(url, new JsonHttpResponseHandler() {
+
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                            if (statusCode == 200) {
+                                int status = 0;
+                                String info = "";
+                                try {
+                                    status = Integer.parseInt(response.get("status").toString());
+                                    info = response.get("info").toString();
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+                                if (status == 1) {
+                                    Snackbar.make(findViewById(R.id.listStudentView), adapter.getItem(finalPosition).getStudentName() + " 上课签到成功", Snackbar.LENGTH_LONG)
+                                            .setAction("Action", null).show();
+                                    adapter.getItem(finalPosition).setTimePresent(hmsformatter.format(date));
+                                    adapter.notifyDataSetChanged();
+                                } else {
+                                    Snackbar.make(findViewById(R.id.listStudentView), adapter.getItem(finalPosition).getStudentName() + " 上课签到失败: " + info, Snackbar.LENGTH_LONG)
+                                            .setAction("Action", null).show();
+                                }
+
+                            }
+                        }
+
+                    });
+
+
+                }else {
+                    Snackbar.make(findViewById(R.id.listStudentView), " 上课签到失败: 此学生不在本班列表", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
                 }
             }
 
@@ -134,11 +186,58 @@ public class ClassRoomActivity extends AppCompatActivity {
 //            Log.d("for loop", "position " + position);
 
                 if (position != -1) {
-                    Date date = new Date();
-                    SimpleDateFormat dateformatter = new SimpleDateFormat("HH:mm:ss");
-                    adapter.getItem(position).setTimeLeft(dateformatter.format(date));
-                    adapter.notifyDataSetChanged();
-                    Snackbar.make(findViewById(R.id.listStudentView), adapter.getItem(position).getStudentName() + " 签退成功", Snackbar.LENGTH_LONG)
+                    final Date date = new Date();
+                    final SimpleDateFormat hmsformatter = new SimpleDateFormat("HH:mm:ss");
+                    SimpleDateFormat dateformatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+                    String url = ConfigApp.SERVER + ConfigApp.CHECKIN_API;
+                    url += "?";
+                    url += "stdid=" + adapter.getItem(position).getStudentId();
+                    url += "&";
+                    url += "clid=" + courseId;
+                    url += "&";
+                    url += "status=" + 1;
+                    url += "&";
+                    url += "datetime=" + dateformatter.format(date);
+
+                    Log.d(TAG, "post: " + url);
+
+
+                    AsyncHttpClient client = new AsyncHttpClient();
+
+                    final int finalPosition = position;
+                    client.get(url, new JsonHttpResponseHandler() {
+
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                            if (statusCode == 200) {
+                                int status = 0;
+                                String info = "";
+                                try {
+                                    status = Integer.parseInt(response.get("status").toString());
+                                    info = response.get("info").toString();
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+                                if (status == 1) {
+                                    Snackbar.make(findViewById(R.id.listStudentView), adapter.getItem(finalPosition).getStudentName() + " 下课签到成功", Snackbar.LENGTH_LONG)
+                                            .setAction("Action", null).show();
+                                    adapter.getItem(finalPosition).setTimeLeft(hmsformatter.format(date));
+                                    adapter.notifyDataSetChanged();
+                                } else {
+                                    Snackbar.make(findViewById(R.id.listStudentView), adapter.getItem(finalPosition).getStudentName() + " 下课签到失败: " + info, Snackbar.LENGTH_LONG)
+                                            .setAction("Action", null).show();
+                                }
+
+                            }
+                        }
+
+                    });
+
+
+                }else {
+                    Snackbar.make(findViewById(R.id.listStudentView), " 下课签到失败: 此学生不在本班列表", Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
                 }
             }
