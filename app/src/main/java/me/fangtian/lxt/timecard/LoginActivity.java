@@ -35,8 +35,11 @@ import android.widget.Toast;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,6 +65,7 @@ public class LoginActivity extends AppCompatActivity {
             "18601199806:hello", "13000000000:world"
     };
     private static final String TAG = "TSLXT";
+    public static final String COURSEDATA = "COURSEDATA";
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
@@ -106,6 +110,31 @@ public class LoginActivity extends AppCompatActivity {
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d(TAG, "onStart: ");
+        Log.d(TAG, "onStart: " + DataProvider.courseList.toString());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume: ");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d(TAG, "onPause: ");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d(TAG, "onStop: ");
     }
 
     /**
@@ -176,23 +205,74 @@ public class LoginActivity extends AppCompatActivity {
 //            mAuthTask = new UserLoginTask(phone, password);
 //            mAuthTask.execute((Void) null);
             String url = ConfigApp.SERVER + ConfigApp.LOGIN_API;
+            url += "?";
+            url += "phone=" + phone;
+            url += "&";
+            url += "pwd=" + password;
 
-            AsyncHttpClient client = new AsyncHttpClient();
+//            Log.d(TAG, "url: " + url);
+
+            final AsyncHttpClient client = new AsyncHttpClient();
 
             client.get(url, new JsonHttpResponseHandler() {
 
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                    Log.d(TAG, "onSuccess: " + statusCode);
+
+                    Log.d(TAG, "statusCode: " + statusCode);
+
+                    if (statusCode == 200) {
+                        int status = 0;
+                        JSONObject data = new JSONObject();
+//                        JSONArray datalist = new JSONArray();
+                        try {
+                            status = Integer.parseInt(response.get("status").toString());
+                            data = (JSONObject) response.get("data");
+//                            datalist = (JSONArray) data.get("list");
+                        }catch (JSONException e) {
+                            e.printStackTrace();
+                            Toast.makeText(LoginActivity.this, "数据解析失败", Toast.LENGTH_SHORT).show();
+                        }
+
+                        if (status == 0) {
+                            showProgress(false);
+                            mPasswordView.setError(getString(R.string.error_incorrect_password));
+                            mPasswordView.requestFocus();
+                        } else if (status ==1){
+
+
+
+
+                            showProgress(false);
+                            finish();
+                            Intent intent = new Intent(LoginActivity.this, MyCourseActivity.class);
+                            intent.putExtra(COURSEDATA, data.toString());
+                            startActivity(intent);
+                        }
+                    } else {
+                        Toast.makeText(LoginActivity.this, "服务异常; statusCode " + statusCode , Toast.LENGTH_LONG).show();
+                        showProgress(false);
+                    }
+                    
+                }
+
+                @Override
+                public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                    super.onFailure(statusCode, headers, responseString, throwable);
+
+                    Toast.makeText(LoginActivity.this, "服务器异常; statusCode " + statusCode , Toast.LENGTH_LONG).show();
                     showProgress(false);
-//                    mPasswordView.setError(getString(R.string.error_incorrect_password));
-//                    mPasswordView.requestFocus();
+                }
 
-//                    mPhoneView.setError(getString(R.string.error_invalid_phone));
-//                    mPhoneView.requestFocus();
-
-//                    Toast.makeText(LoginActivity.this, "登录状态:  " + statusCode, Toast.LENGTH_SHORT).show();
-
+                @Override
+                public void onRetry(int retryNo) {
+                    Log.d(TAG, "onRetry: " + retryNo);
+                    if (retryNo == 1) {
+//                        showProgress(false);
+                        client.cancelAllRequests(true);
+                        client.cancelRequests(LoginActivity.this, true);
+                        Toast.makeText(LoginActivity.this, "网络异常,请检查您的网络设置", Toast.LENGTH_LONG).show();
+                    }
                 }
             });
 

@@ -9,6 +9,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.zxing.Result;
 import com.loopj.android.http.AsyncHttpClient;
@@ -155,9 +156,16 @@ public class ClassRoomActivity extends AppCompatActivity {
                                             .setAction("Action", null).show();
                                 }
 
+                            } else {
+                                Snackbar.make(findViewById(R.id.listStudentView), adapter.getItem(finalPosition).getStudentName() + " 上课签到失败: 服务不可用", Snackbar.LENGTH_LONG)
+                                        .setAction("Action", null).show();
                             }
                         }
 
+                        @Override
+                        public void onRetry(int retryNo) {
+                            Toast.makeText(ClassRoomActivity.this, "网络异常,请检查您的网络设置", Toast.LENGTH_LONG).show();
+                        }
                     });
 
 
@@ -230,9 +238,16 @@ public class ClassRoomActivity extends AppCompatActivity {
                                             .setAction("Action", null).show();
                                 }
 
+                            } else {
+                                Snackbar.make(findViewById(R.id.listStudentView), adapter.getItem(finalPosition).getStudentName() + " 下课签到失败: 服务不可用", Snackbar.LENGTH_LONG)
+                                        .setAction("Action", null).show();
                             }
                         }
 
+                        @Override
+                        public void onRetry(int retryNo) {
+                            Toast.makeText(ClassRoomActivity.this, "网络异常,请检查您的网络设置", Toast.LENGTH_LONG).show();
+                        }
                     });
 
 

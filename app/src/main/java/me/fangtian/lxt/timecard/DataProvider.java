@@ -13,23 +13,15 @@ public final class DataProvider {
     public static List<Course> courseList = new ArrayList<>();
     public static Map<String, Course> courseMap = new HashMap<>();
 
-    static {
 
-        addCourse("101",
-                "六年级期末复习（上）",
-                "上课时间： 2016-09-11 9:00:00");
-        addCourse("102",
-                "六年级期末复习（中）",
-                "上课时间： 2016-09-11 14:00:00");
-        addCourse("103",
-                "六年级期末复习（下）",
-                "上课时间： 2016-09-11 18:30:00");
-
+    public static void addCourse(String courseId, String courseName, String className,
+                                   String timeCourse) {
+        Course course = new Course(courseId, courseName, className, timeCourse);
+        courseList.add(course);
+        courseMap.put(courseId, course);
     }
 
-    private static void addCourse(String courseId, String titleCourse,
-                                   String timeCourse) {
-        Course course = new Course(courseId, titleCourse, timeCourse);
+    public static void addOneCourseById(String courseId, Course course) {
         courseList.add(course);
         courseMap.put(courseId, course);
     }
@@ -37,7 +29,7 @@ public final class DataProvider {
     public static List<String> getCourseNames() {
         List<String> list = new ArrayList<>();
         for (Course course : courseList) {
-            list.add(course.getTitleCoruse());
+            list.add(course.getCourseName());
         }
         return list;
     }
@@ -53,6 +45,11 @@ public final class DataProvider {
 
         return filteredList;
 
+    }
+
+    public static void clearData() {
+        courseList.clear();
+        courseMap.clear();
     }
 
 

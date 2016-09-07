@@ -30,11 +30,14 @@ public class CourseListAdapter extends ArrayAdapter<Course> {
 
         Course course = courses.get(position);
 
-        TextView titleText = (TextView) convertView.findViewById(R.id.titleText);
-        titleText.setText(course.getTitleCoruse());
+        TextView courseName = (TextView) convertView.findViewById(R.id.courseName);
+        courseName.setText(course.getCourseName());
 
-        TextView timeText = (TextView) convertView.findViewById(R.id.timeCourse);
-        timeText.setText(course.getTimeCourse());
+        TextView className = (TextView) convertView.findViewById(R.id.className);
+        className.setText(course.getClassName());
+
+        TextView timeTextStart = (TextView) convertView.findViewById(R.id.timeCourseStart);
+        timeTextStart.setText("上课时间: " + course.getTimeCourseStart());
 
         return convertView;
     }

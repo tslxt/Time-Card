@@ -25,8 +25,8 @@
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/do_present"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         android:layout_gravity="bottom|start"
         android:layout_margin="@dimen/fab_margin"
         android:contentDescription="上课打卡"
@@ -34,10 +34,11 @@
         android:src="@drawable/ic_barcode" />
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/do_left"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/ic_barcode" />
+        android:src="@drawable/ic_barcode"
+        app:backgroundTint="@color/design_textinput_error_color_dark" />
 
 </android.support.design.widget.CoordinatorLayout>
