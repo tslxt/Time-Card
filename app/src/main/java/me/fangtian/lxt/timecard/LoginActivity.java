@@ -210,7 +210,7 @@ public class LoginActivity extends AppCompatActivity {
             url += "&";
             url += "pwd=" + password;
 
-//            Log.d(TAG, "url: " + url);
+            Log.d(TAG, "url: " + url);
 
             final AsyncHttpClient client = new AsyncHttpClient();
 
@@ -227,11 +227,11 @@ public class LoginActivity extends AppCompatActivity {
 //                        JSONArray datalist = new JSONArray();
                         try {
                             status = Integer.parseInt(response.get("status").toString());
-                            data = (JSONObject) response.get("data");
+//                            data = (JSONObject) response.get("data");
 //                            datalist = (JSONArray) data.get("list");
                         }catch (JSONException e) {
                             e.printStackTrace();
-                            Toast.makeText(LoginActivity.this, "数据解析失败", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(LoginActivity.this, "数据解析失败", Toast.LENGTH_LONG).show();
                         }
 
                         if (status == 0) {
@@ -241,7 +241,11 @@ public class LoginActivity extends AppCompatActivity {
                         } else if (status ==1){
 
 
-
+                            try {
+                                data = (JSONObject) response.get("data");
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
 
                             showProgress(false);
                             finish();
