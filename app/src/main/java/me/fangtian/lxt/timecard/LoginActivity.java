@@ -3,7 +3,9 @@ package me.fangtian.lxt.timecard;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -28,6 +30,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -76,11 +79,20 @@ public class LoginActivity extends AppCompatActivity {
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    //remember password zone
+    private SharedPreferences sp;
+    private CheckBox rpw_checkbox;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        sp = this.getSharedPreferences("userInfo", Context.MODE_PRIVATE);
+
+        rpw_checkbox = (CheckBox) findViewById(R.id.rememberPassWord);
+
+
         // Set up the login form.
         mPhoneView = (AutoCompleteTextView) findViewById(R.id.phone);
 
@@ -99,6 +111,12 @@ public class LoginActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+        if (sp.getBoolean("ISCHECK", true)) {
+            mPhoneView.setText(sp.getString("PHONE", ""));
+            mPasswordView.setText(sp.getString("PASSWORD", ""));
+            rpw_checkbox.setChecked(true);
+        }
 
         Button mSignInButton = (Button) findViewById(R.id.sign_in_button);
         mSignInButton.setOnClickListener(new OnClickListener() {
@@ -166,8 +184,8 @@ public class LoginActivity extends AppCompatActivity {
         mPasswordView.setError(null);
 
         // Store values at the time of the login attempt.
-        String phone = mPhoneView.getText().toString();
-        String password = mPasswordView.getText().toString();
+        final String phone = mPhoneView.getText().toString();
+        final String password = mPasswordView.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
@@ -247,6 +265,12 @@ public class LoginActivity extends AppCompatActivity {
                                 e.printStackTrace();
                             }
 
+                            if (rpw_checkbox.isChecked()) {
+                                remberPassWord(phone,password,true);
+                            } else {
+                                remberPassWord(phone,password,false);
+                            }
+
                             showProgress(false);
                             finish();
                             Intent intent = new Intent(LoginActivity.this, MyCourseActivity.class);
@@ -282,6 +306,20 @@ public class LoginActivity extends AppCompatActivity {
 
 
         }
+    }
+
+    private void remberPassWord(String phone, String password, boolean remmber) {
+        SharedPreferences.Editor editor = sp.edit();
+        if (remmber) {
+            editor.putString("PHONE", phone);
+            editor.putString("PASSWORD", password);
+            editor.putBoolean("ISCHECK", true);
+            editor.commit();
+        } else {
+            editor.putBoolean("ISCHECK", false);
+            editor.commit();
+        }
+
     }
 
     private boolean isEmailValid(String email) {
