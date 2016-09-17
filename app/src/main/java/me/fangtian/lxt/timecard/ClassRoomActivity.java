@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -39,6 +40,7 @@ public class ClassRoomActivity extends AppCompatActivity {
 
     public static final String RETURN_BARCODE = "RETURN_BARCODE";
     private static final String TAG = "tslxt_classroom";
+    public static final String STUDENT = "STUDENT";
 
     //    private ArrayList<Student> students = getStudents();
     private ArrayList<Student> students = new ArrayList<>();
@@ -66,6 +68,25 @@ public class ClassRoomActivity extends AppCompatActivity {
                 this, R.layout.list_student, students);
         ListView lv = (ListView) findViewById(R.id.listStudentView);
         lv.setAdapter(adapter);
+
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                Log.d(TAG, "onItemClick: " + position);
+                Log.d(TAG, "onItemClick: " + id);
+                Log.d(TAG, "onItemClick: " + students.get(position).getStudentId());
+
+                Intent intent = new Intent(ClassRoomActivity.this, DetailStudentActivity.class);
+                ArrayList<String> student = new ArrayList<String>();
+                student.add(students.get(position).getStudentId());
+                student.add(students.get(position).getStudentName());
+                intent.putStringArrayListExtra(STUDENT, student);
+                startActivityForResult(intent, LEFT_REQEUST);
+
+
+            }
+        });
 
 
         FloatingActionButton doPresent = (FloatingActionButton) findViewById(R.id.do_present);
