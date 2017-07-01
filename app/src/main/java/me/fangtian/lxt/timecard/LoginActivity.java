@@ -112,6 +112,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+
         if (sp.getBoolean("ISCHECK", true)) {
             mPhoneView.setText(sp.getString("PHONE", ""));
             mPasswordView.setText(sp.getString("PASSWORD", ""));
@@ -260,7 +261,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
                             try {
-                                data = (JSONObject) response.get("data");
+                                ConfigApp.data = (JSONObject) response.get("data");
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -273,8 +274,9 @@ public class LoginActivity extends AppCompatActivity {
 
                             showProgress(false);
                             finish();
-                            Intent intent = new Intent(LoginActivity.this, MyCourseActivity.class);
-                            intent.putExtra(COURSEDATA, data.toString());
+                            Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+//                            intent.putExtra(COURSEDATA, data.toString());
+                            Log.d(TAG, "onSuccess: " + data.toString());
                             startActivity(intent);
                         }
                     } else {
@@ -418,7 +420,7 @@ public class LoginActivity extends AppCompatActivity {
 
             if (success) {
                 finish();
-                Intent intent = new Intent(LoginActivity.this, MyCourseActivity.class);
+                Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
                 startActivity(intent);
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));

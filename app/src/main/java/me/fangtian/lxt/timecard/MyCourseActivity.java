@@ -33,7 +33,6 @@ public class MyCourseActivity extends AppCompatActivity {
 //    private List<Course> courses = DataProvider.courseList;
 //    public static List<Course> courses = new ArrayList<>();
 //    public static Map<String, Course> courseMap = new HashMap<>();
-    private String teacherName = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,47 +42,15 @@ public class MyCourseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_course);
 
-        String data = getIntent().getStringExtra(LoginActivity.COURSEDATA);
-        JSONObject dataJson;
-
-        try {
-            dataJson = new JSONObject(data);
-            teacherName = dataJson.get("name").toString();
-            JSONArray list = (JSONArray) dataJson.get("list");
-//            Log.d(TAG, "list: " + list.length());
-            for (int i = 0; i < list.length(); i++) {
-//                Log.d(TAG, "for " + i);
-                JSONObject courseJson = (JSONObject) list.get(i);
-                JSONArray listStudent = (JSONArray) courseJson.get("stdlist");
-//                Log.d(TAG, "listStudent: " + listStudent.toString());
-                Course course = new Course(courseJson.get("clid").toString(), courseJson.get("coursename").toString(), courseJson.get("classname").toString(), courseJson.get("starttime").toString());
-                for (int s = 0; s<listStudent.length(); s++) {
-                    JSONObject studentJson = (JSONObject) listStudent.get(s);
-                    String presentTime = (String) studentJson.get("intime");
-                    String leftTime = (String) studentJson.get("outtime");
-
-                    if (presentTime.length() > 10) {
-                        presentTime = presentTime.substring(10);
-//                        Log.d(TAG, "present: " + presentTime);
-                    }
-                    if (leftTime.length() > 10) {
-                        leftTime = leftTime.substring(10);
-//                        Log.d(TAG, "left: " + leftTime);
-                    }
-
-                    Student student = new Student(studentJson.get("stdid").toString(), studentJson.get("stdname").toString(), presentTime, leftTime);
-                    course.AddOneStudent(student);
-                }
-                DataProvider.addOneCourseById(course.getCourseId(),course);
-            }
-
-        } catch (JSONException e) {
-            e.printStackTrace();
+        for (int i = 0; i < ConfigApp.courses.size(); i++){
+            DataProvider.addOneCourseById(ConfigApp.courses.get(i).getCourseId(), ConfigApp.courses.get(i));
         }
+
+//        DataProvider.addOneCourseById(course.getCourseId(),course);
 
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle(teacherName + "的教师后台");
+        toolbar.setTitle(ConfigApp.teacherName + "的教师后台");
         setSupportActionBar(toolbar);
 
 
@@ -151,17 +118,21 @@ public class MyCourseActivity extends AppCompatActivity {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
 
             Log.d(TAG, "onKeyDown: equal");
-//             创建退出对话框
-            AlertDialog isExit = new AlertDialog.Builder(this).create();
-            // 设置对话框标题
-//            isExit.setTitle("系统提示");
-            // 设置对话框消息
-            isExit.setMessage("您确定要退出程序吗?");
-            // 添加选择按钮并注册监听
-            isExit.setButton(DialogInterface.BUTTON_POSITIVE,"确定", listener);
-            isExit.setButton(DialogInterface.BUTTON_NEGATIVE,"取消", listener);
-            // 显示对话框
-            isExit.show();
+////             创建退出对话框
+//            AlertDialog isExit = new AlertDialog.Builder(this).create();
+//            // 设置对话框标题
+////            isExit.setTitle("系统提示");
+//            // 设置对话框消息
+//            isExit.setMessage("您确定要退出程序吗?");
+//            // 添加选择按钮并注册监听
+//            isExit.setButton(DialogInterface.BUTTON_POSITIVE,"确定", listener);
+//            isExit.setButton(DialogInterface.BUTTON_NEGATIVE,"取消", listener);
+//            // 显示对话框
+//            isExit.show();
+            finish();
+            Intent intent = new Intent(MyCourseActivity.this, HomeActivity.class);
+            startActivity(intent);
+
         }
 
         return false;
