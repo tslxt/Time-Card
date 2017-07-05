@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -385,6 +386,10 @@ public class PinchImageView extends ImageView {
         cancelAllAnimator();
         //重绘
         invalidate();
+    }
+
+    public void setImageBitmap(Drawable errorDrawable) {
+
     }
 
 

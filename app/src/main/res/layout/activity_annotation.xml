@@ -51,33 +51,47 @@
             android:textSize="20dp" />
     </me.fangtian.lxt.timecard.DragFrameLayout>
 
+    <com.mikepenz.iconics.view.IconicsImageView
+        android:id="@+id/cancel_anno"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="top|right"
+        android:onClick="cancelAnno"
+        android:visibility="invisible"
+        app:iiv_icon="cmd_close_circle"
+        android:paddingRight="20dp"
+        android:paddingTop="20dp"/>
+
 
     <WebView
         android:id="@+id/webView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="invisible" />
+        android:visibility="invisible"
+        />
 
-    <ImageButton
+    <com.mikepenz.iconics.view.IconicsImageView
         android:id="@+id/closeWeb"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_gravity="bottom|right"
         android:onClick="closeWebHandler"
         android:visibility="invisible"
-        app:srcCompat="@android:drawable/ic_notification_clear_all" />
+        app:iiv_icon="cmd_close_circle"
+        android:paddingRight="20dp"
+        android:paddingEnd="20dp"/>
 
-    <ImageButton
+    <com.mikepenz.iconics.view.IconicsImageView
         android:id="@+id/annotationButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:layout_gravity="bottom|end"
-        android:layout_marginBottom="20dp"
-        android:layout_marginEnd="20dp"
-        android:background="@android:color/transparent"
-        android:onClick="annotationHandler"
-        android:visibility="visible"
-        app:srcCompat="@android:drawable/ic_menu_edit" />
+        android:paddingEnd="20dp"
+        android:paddingRight="20dp"
+        app:iiv_icon="cmd_palette"
+        app:iiv_color="@color/primary_light"
+        android:onClick="annotationHandler" />
+
 
     <ProgressBar
         android:id="@+id/imageUploadProgress"
@@ -247,7 +261,7 @@
             android:layout_height="match_parent"
             android:layout_weight="8"
             android:background="@android:color/transparent"
-            android:max="5"
+            android:max="4"
             android:progressDrawable="@color/primary_dark" />
 
         <TextView
@@ -280,63 +294,58 @@
         android:visibility="invisible"
         tools:ignore="UselessParent">
 
-        <ImageButton
+
+
+
+        <com.mikepenz.iconics.view.IconicsImageButton
             android:id="@+id/cropButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
             android:layout_weight="1"
-            android:background="@android:color/transparent"
+            app:iiv_icon="cmd_crop_rotate"
             android:onClick="cropButtonHandler"
-            app:srcCompat="@android:drawable/ic_menu_crop" />
+            />
 
-        <ImageButton
+        <com.mikepenz.iconics.view.IconicsImageButton
             android:id="@+id/freeDrawButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
             android:layout_weight="1"
-            android:background="@android:color/transparent"
             android:onClick="freeDrawHandler"
-            app:srcCompat="@android:drawable/ic_menu_edit" />
+            app:iiv_icon="cmd_grease_pencil" />
 
-        <ImageButton
+        <com.mikepenz.iconics.view.IconicsImageButton
             android:id="@+id/textButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
             android:layout_weight="1"
-            android:background="@android:color/transparent"
             android:onClick="textButtonHandler"
-            app:srcCompat="@android:drawable/ic_menu_preferences" />
+            app:iiv_icon="cmd_format_text"
+            />
 
-        <ImageButton
+        <com.mikepenz.iconics.view.IconicsImageButton
             android:id="@+id/starButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
             android:layout_weight="1"
-            android:background="@android:color/transparent"
-            app:srcCompat="@android:drawable/btn_star_big_on"
-            android:onClick="starButtonHandler" />
+            android:onClick="starButtonHandler"
+            app:iiv_icon="cmd_star_outline"/>
 
-        <Button
+        <com.mikepenz.iconics.view.IconicsImageButton
             android:id="@+id/displayExerButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="显示原题"
             android:onClick="displayExerButton"
-            tools:ignore="HardcodedText" />
+            app:iiv_icon="cmd_link"/>
 
-        <Button
+        <com.mikepenz.iconics.view.IconicsImageButton
             android:id="@+id/uploadButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="上传"
             android:onClick="uploadHandler"
-            tools:ignore="HardcodedText" />
+            app:iiv_icon="cmd_cloud_upload"/>
 
     </LinearLayout>
 

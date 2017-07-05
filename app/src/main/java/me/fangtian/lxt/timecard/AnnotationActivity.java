@@ -21,6 +21,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -35,7 +36,11 @@ import android.widget.Toast;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.Base64;
+import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+import com.mikepenz.community_material_typeface_library.CommunityMaterial;
+import com.mikepenz.iconics.IconicsDrawable;
+import com.mikepenz.iconics.view.IconicsImageView;
 import com.rm.freedrawview.FreeDrawView;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -69,7 +74,7 @@ public class AnnotationActivity extends AppCompatActivity {
     private ConstraintLayout cropperBar;
     private LinearLayout freeDrawBar;
 
-    private ImageButton annotationButton;
+    private IconicsImageView annotationButton;
 
     private ImageButton cropButton;
     private ImageButton freeDrawButton;
@@ -95,7 +100,11 @@ public class AnnotationActivity extends AppCompatActivity {
     private ProgressBar imageUploadProgress;
 
     private WebView webView;
-    private ImageButton closeWeb;
+    private IconicsImageView closeWeb;
+    private IconicsImageView cancel_anno;
+
+    private Boolean imageLoaded = true;
+
 
 
 
@@ -115,7 +124,8 @@ public class AnnotationActivity extends AppCompatActivity {
         imageUploadProgress = (ProgressBar) findViewById(R.id.imageUploadProgress);
 
 
-        annotationButton = (ImageButton) findViewById(R.id.annotationButton);
+        annotationButton = (IconicsImageView) findViewById(R.id.annotationButton);
+        cancel_anno = (IconicsImageView) findViewById(R.id.cancel_anno);
 
         dragFrameLayout = (DragFrameLayout) findViewById(R.id.dragFrameLayout);
 
@@ -128,7 +138,10 @@ public class AnnotationActivity extends AppCompatActivity {
         freeDrawView = (FreeDrawView) findViewById(R.id.freeDrawView);
 
         webView = (WebView) findViewById(R.id.webView);
-        closeWeb = (ImageButton) findViewById(R.id.closeWeb);
+        WebSettings webSettings = webView.getSettings();
+        webSettings.setJavaScriptEnabled(true);
+
+        closeWeb = (IconicsImageView) findViewById(R.id.closeWeb);
 
 
         pagerAdapter = new PagerAdapter() {
@@ -144,23 +157,49 @@ public class AnnotationActivity extends AppCompatActivity {
             }
 
             @Override
-            public Object instantiateItem(ViewGroup container, int position) {
+            public Object instantiateItem(final ViewGroup container, int position) {
+
+                setTitle(ConfigApp.exercises.get(position).getStdname() + "提交的作业");
+
+                IconicsDrawable loading = new IconicsDrawable(AnnotationActivity.this)
+                                        .icon(CommunityMaterial.Icon.cmd_image)
+                                        .color(Color.GRAY)
+                                        .sizeDp(200);
+                final IconicsDrawable error = new IconicsDrawable(AnnotationActivity.this)
+                                        .icon(CommunityMaterial.Icon.cmd_alert)
+                                        .color(Color.GRAY)
+                                        .sizeDp(200);
+
+
+
+
+                Log.d(TAG, "instantiateItem: " + String.valueOf(ConfigApp.exercises.get(position).getAnswerpic()));
 
 
                 PinchImageView piv = new PinchImageView(AnnotationActivity.this);
 
                 Picasso.with(AnnotationActivity.this)
                         .load(String.valueOf(ConfigApp.exercises.get(position).getAnswerpic()))
-                        .placeholder(R.drawable.loading)
-                        .error(R.drawable.warning)
-                        .into(piv);
+                        .placeholder(loading)
+                        .error(error)
+                        .into(piv, new com.squareup.picasso.Callback() {
 
-//                Log.d(TAG, "instantiateItem: " + urls.get(position));
-//                Log.d(TAG, "position: " + position);
+                            @Override
+                            public void onSuccess() {
+                                imageLoaded = true;
+                            }
+
+                            @Override
+                            public void onError() {
+                                imageLoaded = false;
+                            }
+                        });
+
+
+
                 container.addView(piv);
-
-                setTitle(ConfigApp.exercises.get(position).getStdname() + "提交的作业");
                 return piv;
+
             }
 
             @Override
@@ -215,7 +254,14 @@ public class AnnotationActivity extends AppCompatActivity {
         starSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                seekBarProgress.setText(String.valueOf(seekBar.getProgress()));
+//                seekBarProgress.setText(String.valueOf(seekBar.getProgress()));
+
+                Log.d(TAG, "onProgressChanged: " + i);
+                try {
+                    seekBarProgress.setText((CharSequence) ConfigApp.correctionstandard.get(String.valueOf(seekBar.getProgress())));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
 
             @Override
@@ -234,8 +280,14 @@ public class AnnotationActivity extends AppCompatActivity {
     public void annotationHandler(View view) {
         Log.d(TAG, "annotationHandler: ");
 
+        if (imageLoaded == false) {
+            Toast.makeText(this, "图片读取失败，请检查网络设置是否正确", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         annotationButton.setVisibility(View.INVISIBLE);
         toolsBar.setVisibility(View.VISIBLE);
+        cancel_anno.setVisibility(View.VISIBLE);
 
 
         Picasso.with(AnnotationActivity.this)
@@ -248,6 +300,7 @@ public class AnnotationActivity extends AppCompatActivity {
 
     public void cropButtonHandler(View view) {
         toolsBar.setVisibility(View.INVISIBLE);
+        cancel_anno.setVisibility(View.INVISIBLE);
         cropperBar.setVisibility(View.VISIBLE);
         mongtageView.setVisibility(View.INVISIBLE);
         cropImageView.setVisibility(View.VISIBLE);
@@ -267,6 +320,7 @@ public class AnnotationActivity extends AppCompatActivity {
 
     public void canceCropHandler(View view) {
         toolsBar.setVisibility(View.VISIBLE);
+        cancel_anno.setVisibility(View.VISIBLE);
         cropperBar.setVisibility(View.INVISIBLE);
         mongtageView.setVisibility(View.VISIBLE);
         cropImageView.setVisibility(View.INVISIBLE);
@@ -274,6 +328,7 @@ public class AnnotationActivity extends AppCompatActivity {
 
     public void confirmCropHandler(View view) {
         toolsBar.setVisibility(View.VISIBLE);
+        cancel_anno.setVisibility(View.VISIBLE);
         cropperBar.setVisibility(View.INVISIBLE);
 
 
@@ -345,6 +400,7 @@ public class AnnotationActivity extends AppCompatActivity {
 
     public void freeDrawHandler(View view) {
         toolsBar.setVisibility(View.INVISIBLE);
+        cancel_anno.setVisibility(View.INVISIBLE);
         freeDrawBar.setVisibility(View.VISIBLE);
 
         freeDrawView.setVisibility(View.VISIBLE);
@@ -369,6 +425,7 @@ public class AnnotationActivity extends AppCompatActivity {
 
     public void confirmDrawHandler(View view) {
         toolsBar.setVisibility(View.VISIBLE);
+        cancel_anno.setVisibility(View.VISIBLE);
         freeDrawBar.setVisibility(View.INVISIBLE);
         freeDrawView.setVisibility(View.INVISIBLE);
 
@@ -413,6 +470,7 @@ public class AnnotationActivity extends AppCompatActivity {
         dragFrameLayout.setVisibility(View.INVISIBLE);
         annotationBar.setVisibility(View.INVISIBLE);
         toolsBar.setVisibility(View.VISIBLE);
+        cancel_anno.setVisibility(View.VISIBLE);
 
     }
 
@@ -420,15 +478,18 @@ public class AnnotationActivity extends AppCompatActivity {
         dragFrameLayout.setVisibility(View.VISIBLE);
         annotationBar.setVisibility(View.VISIBLE);
         toolsBar.setVisibility(View.INVISIBLE);
+        cancel_anno.setVisibility(View.INVISIBLE);
     }
 
     public void starButtonHandler(View view) {
         toolsBar.setVisibility(View.INVISIBLE);
+        cancel_anno.setVisibility(View.INVISIBLE);
         starBar.setVisibility(View.VISIBLE);
     }
 
     public void starConfirmHandler(View view) {
         toolsBar.setVisibility(View.VISIBLE);
+        cancel_anno.setVisibility(View.VISIBLE);
         starBar.setVisibility(View.INVISIBLE);
     }
 
@@ -488,22 +549,29 @@ public class AnnotationActivity extends AppCompatActivity {
 
 
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            currentBitmap.compress(Bitmap.CompressFormat.JPEG, 60, stream);
-            byte[] byteArray = stream.toByteArray();
+            try {
+                currentBitmap.compress(Bitmap.CompressFormat.JPEG, 60, stream);
+                byte[] byteArray = stream.toByteArray();
+
+                RequestParams params = new RequestParams();
+                params.put("qid", ConfigApp.exercises.get(pager.getCurrentItem()).getQid());
+                params.put("stdid", ConfigApp.exercises.get(pager.getCurrentItem()).getStdid());
+                params.put("clid", ConfigApp.exercises.get(pager.getCurrentItem()).getClid());
+                params.put("score", seekBarProgress.getText());
+                params.put("correctedpic", Base64.encodeToString(byteArray, Base64.DEFAULT));
+                Log.d(TAG, "onClick: " + params.toString());
+
+                AsyncHttpClient client = new AsyncHttpClient();
+                client.post(ConfigApp.ANNOSERVER, params, responseHandler);
+            }catch (Exception e) {
+                Log.d(TAG, "uploadHandler: " + e);
+                Toast.makeText(AnnotationActivity.this, e.toString(), Toast.LENGTH_LONG).show();
+            }
 
 
-            RequestParams params = new RequestParams();
-            params.put("qid", ConfigApp.exercises.get(pager.getCurrentItem()).getQid());
-            params.put("stdid", ConfigApp.exercises.get(pager.getCurrentItem()).getStdid());
-            params.put("clid", ConfigApp.exercises.get(pager.getCurrentItem()).getClid());
-            params.put("score", seekBarProgress.getText());
-            params.put("correctedpic", Base64.encodeToString(byteArray, Base64.DEFAULT));
 
 
-            Log.d(TAG, "onClick: " + params.toString());
 
-            AsyncHttpClient client = new AsyncHttpClient();
-            client.post(ConfigApp.ANNOSERVER, params, responseHandler);
 
 
 
@@ -513,7 +581,7 @@ public class AnnotationActivity extends AppCompatActivity {
 
     }
 
-    private AsyncHttpResponseHandler responseHandler = new AsyncHttpResponseHandler() {
+    private JsonHttpResponseHandler responseHandler = new JsonHttpResponseHandler() {
         @Override
         public void onStart() {
             super.onStart();
@@ -521,36 +589,56 @@ public class AnnotationActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-            imageUploadProgress.setVisibility(View.INVISIBLE);
-            Log.d(TAG, "onSuccess: " + statusCode);
-            Log.d(TAG, "onSuccess: " + new String(responseBody));
+        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
 
-            toolsBar.setVisibility(View.INVISIBLE);
-            pager.setVisibility(View.VISIBLE);
-            mongtageView.setVisibility(View.INVISIBLE);
-            annotationButton.setVisibility(View.VISIBLE);
-            Toast.makeText(AnnotationActivity.this, "作业批改提交成功", Toast.LENGTH_LONG).show();
+            Log.d(TAG, "onSuccess: " + response.toString());
+
+            if (statusCode == 200) {
+                int status = 0;
+                String info = "";
+                JSONObject data = new JSONObject();
+                try {
+                    status = Integer.parseInt(response.get("status").toString());
+                    info = response.get("info").toString();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Toast.makeText(AnnotationActivity.this, "数据解析失败", Toast.LENGTH_LONG).show();
+                }
+
+                if (status == 0) {
+                    Toast.makeText(AnnotationActivity.this, info, Toast.LENGTH_LONG).show();
+                } else {
+                    imageUploadProgress.setVisibility(View.INVISIBLE);
+
+                    toolsBar.setVisibility(View.INVISIBLE);
+                    cancel_anno.setVisibility(View.INVISIBLE);
+                    pager.setVisibility(View.VISIBLE);
+                    mongtageView.setVisibility(View.INVISIBLE);
+                    annotationButton.setVisibility(View.VISIBLE);
+                    Toast.makeText(AnnotationActivity.this, "作业批改提交成功", Toast.LENGTH_LONG).show();
 
 
-            ConfigApp.exercises.remove(pager.getCurrentItem());
+                    ConfigApp.exercises.remove(pager.getCurrentItem());
 
-            pagerAdapter.notifyDataSetChanged();
+                    pagerAdapter.notifyDataSetChanged();
 
-            seekBarProgress.setText("无分");
+                    seekBarProgress.setText("无分");
 //            starSeekBar.setProgress(0);
 
-            if (ConfigApp.exercises.size()==0) {
-                Toast.makeText(AnnotationActivity.this, "恭喜你，所有作业都批改完了", Toast.LENGTH_LONG).show();
+                    if (ConfigApp.exercises.size() == 0) {
+                        Toast.makeText(AnnotationActivity.this, "恭喜你，所有作业都批改完了", Toast.LENGTH_LONG).show();
+                    }
+                }
+
             }
 
         }
 
         @Override
-        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+        public void onFailure(int statusCode, Header[] headers,String responseString, Throwable error) {
             imageUploadProgress.setVisibility(View.INVISIBLE);
             Log.d(TAG, "onFailure: " + statusCode);
-            Log.d(TAG, "onFailure: " + new String(responseBody));
+            Log.d(TAG, "onFailure: " + responseString);
             Toast.makeText(AnnotationActivity.this, "网络异常，请查看手机是否联网", Toast.LENGTH_LONG).show();
         }
 
@@ -567,11 +655,22 @@ public class AnnotationActivity extends AppCompatActivity {
         closeWeb.setVisibility(View.VISIBLE);
         webView.loadUrl(ConfigApp.showQstUrl + ConfigApp.exercises.get(pager.getCurrentItem()).getQid());
         toolsBar.setVisibility(View.INVISIBLE);
+        cancel_anno.setVisibility(View.INVISIBLE);
     }
 
     public void closeWebHandler(View view) {
         webView.setVisibility(View.INVISIBLE);
         closeWeb.setVisibility(View.INVISIBLE);
         toolsBar.setVisibility(View.VISIBLE);
+        cancel_anno.setVisibility(View.VISIBLE);
+    }
+
+    public void cancelAnno(View view) {
+        toolsBar.setVisibility(View.INVISIBLE);
+        cancel_anno.setVisibility(View.INVISIBLE);
+        pager.setVisibility(View.VISIBLE);
+        mongtageView.setVisibility(View.INVISIBLE);
+        annotationButton.setVisibility(View.VISIBLE);
+
     }
 }

@@ -6,6 +6,15 @@
     android:layout_height="match_parent"
     tools:context="me.fangtian.lxt.timecard.HomeActivity">
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
     <TextView
         android:id="@+id/welcome"
         android:layout_width="0dp"
@@ -13,7 +22,7 @@
 
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="100dp"
         android:text="亲爱的方田员工，现在是2017年6月30日星期五。欢迎您的到来！"
         android:textSize="24sp"
         app:layout_constraintLeft_toLeftOf="parent"

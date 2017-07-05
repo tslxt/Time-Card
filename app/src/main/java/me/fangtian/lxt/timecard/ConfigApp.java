@@ -33,4 +33,6 @@ public class ConfigApp {
 
     public static String showQstUrl = "http://182.92.239.180/fangtian_ol_new/index.php/Quest/showForMobile/id/";
 
+    public static JSONObject correctionstandard = new JSONObject();
+
 }
