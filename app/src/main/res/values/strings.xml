@@ -16,7 +16,7 @@
     </string>
     <string name="title_activity_my_course">我的课程列表</string>
     <string name="title_activity_class_room">ClassRoomActivity</string>
-    <string name="app_version">Version: 2.0.2</string>
+    <string name="app_version">Version: 2.0.4</string>
     <string name="quit">quit</string>
     <string name="rememberPassWord">记住密码</string>
 </resources>

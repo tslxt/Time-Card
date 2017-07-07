@@ -15,7 +15,7 @@ public class ConfigApp {
     public static String PICSERVER = "http://101.200.124.30";
 
 //    public static String LOGIN_API = "/fangtian_ol/admin.php/Index/teacherLoginOk.html";
-    public static String LOGIN_API = "/fangtian_ol_new/admin.php/Index/teacherLoginOk.html";
+    public static String LOGIN_API = "/fangtian_ol/admin.php/Index/teacherLoginOk.html";
 
     public static String CHECKIN_API = "/fangtian_ol/admin.php/Index/stdCheckin.html";
 
@@ -29,10 +29,20 @@ public class ConfigApp {
 
     public static boolean alreaday = false;
 
-    public static String ANNOSERVER = "http://182.92.239.180/fangtian_ol_new/admin.php/Index/correctDwByMobile";
+    public static String ANNOSERVER = "http://182.92.239.180/fangtian_ol/admin.php/Index/correctDwByMobile";
 
-    public static String showQstUrl = "http://182.92.239.180/fangtian_ol_new/index.php/Quest/showForMobile/id/";
+    public static String showQstUrl = "http://182.92.239.180/fangtian_ol/index.php/Quest/showForMobile/id/";
 
     public static JSONObject correctionstandard = new JSONObject();
+
+    public static void resetConfig(){
+        ConfigApp.alreaday = false;
+        ConfigApp.exercises = null;
+        ConfigApp.exercises = new ArrayList<Exercise>();
+        ConfigApp.data = null;
+        ConfigApp.data = new JSONObject();
+        ConfigApp.courses = null;
+        ConfigApp.courses =  new ArrayList<Course>();
+    }
 
 }

@@ -28,6 +28,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class HomeActivity extends AppCompatActivity {
@@ -279,6 +280,7 @@ public class HomeActivity extends AppCompatActivity {
 
             switch (which) {
                 case AlertDialog.BUTTON_POSITIVE:// "确认"按钮退出程序
+                    ConfigApp.resetConfig();
                     finish();
                     break;
                 case AlertDialog.BUTTON_NEGATIVE:// "取消"第二个按钮取消对话框
@@ -288,4 +290,5 @@ public class HomeActivity extends AppCompatActivity {
             }
         }
     };
+
 }

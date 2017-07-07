@@ -639,7 +639,8 @@ public class AnnotationActivity extends AppCompatActivity {
             imageUploadProgress.setVisibility(View.INVISIBLE);
             Log.d(TAG, "onFailure: " + statusCode);
             Log.d(TAG, "onFailure: " + responseString);
-            Toast.makeText(AnnotationActivity.this, "网络异常，请查看手机是否联网", Toast.LENGTH_LONG).show();
+            Toast.makeText(AnnotationActivity.this, "网络异常，请查看手机是否联网" + responseString, Toast.LENGTH_LONG).show();
+            Log.d(TAG, "onFailure: " + responseString);
         }
 
         @Override

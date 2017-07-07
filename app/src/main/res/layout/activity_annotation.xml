@@ -165,34 +165,30 @@
         android:background="@android:color/black"
         android:visibility="invisible">
 
-        <ImageButton
+        <com.mikepenz.iconics.view.IconicsImageButton
             android:id="@+id/rotationButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
             android:layout_marginLeft="20dp"
-            android:layout_marginTop="8dp"
-            android:background="@android:color/transparent"
             android:onClick="rotationHandler"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@android:drawable/ic_menu_rotate"
+            app:iiv_icon="cmd_rotate_right"
+            app:iiv_color="@color/colorPrimary"
             tools:ignore="RtlHardcoded" />
 
-        <ImageButton
+        <com.mikepenz.iconics.view.IconicsImageButton
             android:id="@+id/cancelCropperButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
             android:layout_marginLeft="20dp"
-            android:layout_marginTop="8dp"
-            android:background="@android:color/transparent"
             android:onClick="canceCropHandler"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:iiv_color="@color/colorPrimary"
             app:layout_constraintLeft_toRightOf="@+id/rotationButton"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@android:drawable/ic_menu_close_clear_cancel" />
+            app:iiv_icon="cmd_cancel" />
 
         <Button
             android:id="@+id/confirmCropperButton"
