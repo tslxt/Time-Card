@@ -9,8 +9,8 @@ import java.util.ArrayList;
  */
 public class ConfigApp {
 
-//    public static String SERVER = "http://www.fangtian.me";
-    public static String SERVER = "http://182.92.239.180";
+    public static String SERVER = "http://www.fangtian.me";
+//    public static String SERVER = "http://182.92.239.180";
 
     public static String PICSERVER = "http://101.200.124.30";
 
@@ -29,9 +29,11 @@ public class ConfigApp {
 
     public static boolean alreaday = false;
 
-    public static String ANNOSERVER = "http://182.92.239.180/fangtian_ol/admin.php/Index/correctDwByMobile";
+//    public static String ANNOSERVER = "http://182.92.239.180/fangtian_ol/admin.php/Index/correctDwByMobile";
+    public static String ANNOSERVER = "http://www.fangtian.me/fangtian_ol/admin.php/Index/correctDwByMobile";
 
-    public static String showQstUrl = "http://182.92.239.180/fangtian_ol/index.php/Quest/showForMobile/id/";
+//    public static String showQstUrl = "http://182.92.239.180/fangtian_ol/index.php/Quest/showForMobile/id/";
+    public static String showQstUrl = "http://www.fangtian.me/fangtian_ol/index.php/Quest/showForMobile/id/";
 
     public static JSONObject correctionstandard = new JSONObject();
 

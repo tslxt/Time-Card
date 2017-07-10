@@ -119,8 +119,8 @@ public class HomeActivity extends AppCompatActivity {
                         tempEx.setClid(tempObject.get("clid").toString());
                         tempEx.setWorktime(tempObject.get("worktime").toString());
                         ConfigApp.exercises.add(tempEx);
-
-//                        Log.d(TAG, "onCreate: " + tempEx.getAnswerpic());
+                        Log.d(TAG, "Testpic: " + tempEx.getStdname());
+                        Log.d(TAG, "Testpic: " + tempEx.getAnswerpic());
                     }
                 }
             } catch (JSONException e) {
@@ -158,7 +158,7 @@ public class HomeActivity extends AppCompatActivity {
 
 
         IProfile profile = new ProfileDrawerItem()
-                .withName("曹媛")
+                .withName(ConfigApp.teacherName)
 //                .withEmail("caoyuan@fangtian.me")
                 .withIcon("http://noavatar.csdn.net/5/D/8/1_soma5431.jpg")
                 .withIdentifier(100);
@@ -206,17 +206,17 @@ public class HomeActivity extends AppCompatActivity {
 //                        Log.d(TAG, "onItemClick: " + drawerItem.getIdentifier());
                         switch ((int) drawerItem.getIdentifier()) {
                             case 101:
-                                Toast.makeText(HomeActivity.this, "打卡签到", Toast.LENGTH_SHORT).show();
+//                                Toast.makeText(HomeActivity.this, "打卡签到", Toast.LENGTH_SHORT).show();
                                 Log.d(TAG, "onItemClick: " + "打卡签到");
                                 takeLessonHandler(null);
                                 break;
                             case 102:
-                                Toast.makeText(HomeActivity.this, "作业批示", Toast.LENGTH_SHORT).show();
+//                                Toast.makeText(HomeActivity.this, "作业批示", Toast.LENGTH_SHORT).show();
                                 Log.d(TAG, "onItemClick: " + "作业批示");
                                 takeAnnotationHandler(null);
                                 break;
                             case 200:
-                                Toast.makeText(HomeActivity.this, "退出登录", Toast.LENGTH_SHORT).show();
+//                                Toast.makeText(HomeActivity.this, "退出登录", Toast.LENGTH_SHORT).show();
                                 Log.d(TAG, "onItemClick: " + "退出登录");
                                 confirmQuit();
                                 break;
@@ -232,6 +232,10 @@ public class HomeActivity extends AppCompatActivity {
 
     public void takeLessonHandler(View view) {
 //        Toast.makeText(this, "去打卡签到", Toast.LENGTH_LONG).show();
+        if (ConfigApp.courses.size() == 0 ){
+            Toast.makeText(this, "您今天没有课要上", Toast.LENGTH_SHORT).show();
+            return;
+        }
         finish();
         Intent intent = new Intent(HomeActivity.this, MyCourseActivity.class);
         startActivity(intent);
@@ -239,6 +243,11 @@ public class HomeActivity extends AppCompatActivity {
 
     public void takeAnnotationHandler(View view) {
 //        Toast.makeText(this, "去判作业", Toast.LENGTH_LONG).show();
+
+        if (ConfigApp.exercises.size() == 0 ){
+           Toast.makeText(this, "您没有要批示的作业", Toast.LENGTH_SHORT).show();
+            return;
+        }
         finish();
         Intent intent = new Intent(HomeActivity.this, AnnotationActivity.class);
         startActivity(intent);

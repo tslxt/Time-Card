@@ -159,7 +159,7 @@ public class AnnotationActivity extends AppCompatActivity {
             @Override
             public Object instantiateItem(final ViewGroup container, int position) {
 
-                setTitle(ConfigApp.exercises.get(position).getStdname() + "提交的作业");
+//                setTitle(ConfigApp.exercises.get(position).getStdname() + "提交的作业");
 
                 IconicsDrawable loading = new IconicsDrawable(AnnotationActivity.this)
                                         .icon(CommunityMaterial.Icon.cmd_image)
@@ -210,6 +210,12 @@ public class AnnotationActivity extends AppCompatActivity {
             @Override
             public int getItemPosition(Object object) {
                 return POSITION_NONE;
+            }
+
+            @Override
+            public void setPrimaryItem(ViewGroup container, int position, Object object) {
+                super.setPrimaryItem(container, position, object);
+                setTitle(ConfigApp.exercises.get(pager.getCurrentItem()).getStdname() + "提交的作业");
             }
         };
 
@@ -293,6 +299,7 @@ public class AnnotationActivity extends AppCompatActivity {
         Picasso.with(AnnotationActivity.this)
                 .load(String.valueOf(ConfigApp.exercises.get(pager.getCurrentItem()).getAnswerpic()))
                 .into(montageTarget);
+//        setTitle(ConfigApp.exercises.get(pager.getCurrentItem()).getStdname() + "提交的作业");
         pager.setVisibility(View.INVISIBLE);
         mongtageView.setVisibility(View.VISIBLE);
 

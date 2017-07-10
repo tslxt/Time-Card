@@ -276,7 +276,7 @@ public class LoginActivity extends AppCompatActivity {
                             finish();
                             Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
 //                            intent.putExtra(COURSEDATA, data.toString());
-                            Log.d(TAG, "onSuccess: " + data.toString());
+                            Log.d(TAG, "onSuccess: " + ConfigApp.data.toString());
                             startActivity(intent);
                         }
                     } else {
