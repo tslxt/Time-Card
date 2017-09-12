@@ -9,15 +9,14 @@ import java.util.ArrayList;
  */
 public class ConfigApp {
 
-    public static String SERVER = "http://www.fangtian.me";
-//    public static String SERVER = "http://182.92.239.180";
+//    public static String SERVER = "http://www.fangtian.me/fangtian_ol/admin.php/Index";
+    public static String SERVER = "http://182.92.239.180/fangtian_ol_new/admin.php/Index";
 
     public static String PICSERVER = "http://101.200.124.30";
 
-//    public static String LOGIN_API = "/fangtian_ol/admin.php/Index/teacherLoginOk.html";
-    public static String LOGIN_API = "/fangtian_ol/admin.php/Index/teacherLoginOk.html";
+    public static String LOGIN_API = "/teacherLoginOk.html";
 
-    public static String CHECKIN_API = "/fangtian_ol/admin.php/Index/stdCheckin.html";
+    public static String CHECKIN_API = "/stdCheckin.html";
 
     public static JSONObject data = new JSONObject();
 
@@ -29,11 +28,9 @@ public class ConfigApp {
 
     public static boolean alreaday = false;
 
-//    public static String ANNOSERVER = "http://182.92.239.180/fangtian_ol/admin.php/Index/correctDwByMobile";
-    public static String ANNOSERVER = "http://www.fangtian.me/fangtian_ol/admin.php/Index/correctDwByMobile";
+    public static String ANNOSERVER = SERVER + "/correctDwByMobile";
 
-//    public static String showQstUrl = "http://182.92.239.180/fangtian_ol/index.php/Quest/showForMobile/id/";
-    public static String showQstUrl = "http://www.fangtian.me/fangtian_ol/index.php/Quest/showForMobile/id/";
+    public static String showQstUrl = SERVER + "/Quest/showForMobile/id/";
 
     public static JSONObject correctionstandard = new JSONObject();
 
