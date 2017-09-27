@@ -237,7 +237,7 @@ public class ClassRoomActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
         if (requestCode == PRESENT_REQEUST) {
             if (resultCode ==  RESULT_OK) {
 //                Snackbar.make(findViewById(R.id.listStudentView), data.getStringExtra(RETURN_BARCODE) + "签到", Snackbar.LENGTH_LONG)
@@ -246,8 +246,11 @@ public class ClassRoomActivity extends AppCompatActivity {
 
                 for (int i=0; i<students.size();i++) {
 //                Log.d("for loop", "students: " + i + students.get(i).getStudentId());
-//                Log.d("for loop", data.getStringExtra(RETURN_BARCODE) );
-                    if (Integer.parseInt(data.getStringExtra(RETURN_BARCODE)) == Integer.parseInt(students.get(i).getStudentId())) {
+                Log.d("for loop", data.getStringExtra(RETURN_BARCODE) );
+//                    if (Integer.parseInt(data.getStringExtra(RETURN_BARCODE)) == Integer.parseInt(students.get(i).getStudentId())) {
+//                        position = i;
+//                    }
+                    if (data.getStringExtra(RETURN_BARCODE).equals(students.get(i).getStudentId())) {
                         position = i;
                     }
                 }
@@ -315,8 +318,56 @@ public class ClassRoomActivity extends AppCompatActivity {
 
 
                 }else {
-                    Snackbar.make(findViewById(R.id.listStudentView), " 上课签到失败: 此学生不在本班列表", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
+//                    Snackbar.make(findViewById(R.id.listStudentView), " 上课签到失败: 此学生不在本班列表", Snackbar.LENGTH_LONG)
+//                            .setAction("Action", null).show();
+
+                    final Date date = new Date();
+                    final SimpleDateFormat dateformatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+                    String url = ConfigApp.SERVER + ConfigApp.CHECKIN_API;
+                    url += "?";
+                    url += "stdid=" + data.getStringExtra(RETURN_BARCODE);
+                    url += "&";
+                    url += "clid=" + courseId;
+                    url += "&";
+                    url += "status=" + 0;
+                    url += "&";
+                    url += "datetime=" + dateformatter.format(date);
+
+                    Log.d(TAG, "post: " + url);
+
+
+                    AsyncHttpClient client = new AsyncHttpClient();
+
+                    final int finalPosition = position;
+                    client.get(url, new JsonHttpResponseHandler() {
+
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                            if (statusCode == 200) {
+                                int status = 0;
+                                String info = "";
+                                try {
+                                    status = Integer.parseInt(response.get("status").toString());
+                                    info = response.get("info").toString();
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+                                if (status == 1) {
+                                    Snackbar.make(findViewById(R.id.listStudentView), data.getStringExtra(RETURN_BARCODE) + " 上课签到成功", Snackbar.LENGTH_LONG)
+                                            .setAction("Action", null).show();
+                                } else {
+                                    Snackbar.make(findViewById(R.id.listStudentView), "上课签到失败: " + info, Snackbar.LENGTH_LONG)
+                                            .setAction("Action", null).show();
+                                }
+
+                            } else {
+                                Snackbar.make(findViewById(R.id.listStudentView), adapter.getItem(finalPosition).getStudentName() + " 上课签到失败: 服务不可用", Snackbar.LENGTH_LONG)
+                                        .setAction("Action", null).show();
+                            }
+                        }
+                    });
                 }
             }
 
