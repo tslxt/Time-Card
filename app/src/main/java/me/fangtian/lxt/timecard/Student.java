@@ -16,8 +16,8 @@ public class Student {
     public Student(String studentId, String studentName, String timePresent, String timeLeft) {
         this.studentId = studentId;
         this.studentName = studentName;
-        this.timePresent = timePresent;
-        this.timeLeft = timeLeft;
+        this.timePresent = verifyString(timePresent);
+        this.timeLeft = verifyString(timeLeft);
     }
 
     public String getStudentId() { return studentId; }
@@ -26,8 +26,20 @@ public class Student {
     public String getTimeLeft() { return timeLeft; }
     public boolean getSelected() { return selected; }
 
-    public void setTimePresent(String timePresent) { this.timePresent = timePresent; }
-    public void setTimeLeft(String timeLeft) { this.timeLeft = timeLeft; }
+    public void setTimePresent(String timePresent) {
+        this.timePresent = verifyString(timePresent);
+    }
+    public void setTimeLeft(String timeLeft) {
+        this.timeLeft = verifyString(timeLeft);
+    }
     public void setSelected(Boolean selected) { this.selected = selected; }
+
+    private String verifyString(String date) {
+        if (date.length() > 11) {
+            return date.substring(11);
+        } else {
+            return date;
+        }
+    }
 
 }

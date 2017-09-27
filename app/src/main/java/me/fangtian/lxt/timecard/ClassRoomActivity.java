@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.view.LayoutInflaterCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -18,6 +20,7 @@ import android.widget.Toast;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
+import com.mikepenz.iconics.context.IconicsLayoutInflater;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -57,13 +60,16 @@ public class ClassRoomActivity extends AppCompatActivity {
 
     private MenuItem menuItem;
 
+    private SwipeRefreshLayout swipeRefreshView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        LayoutInflaterCompat.setFactory(getLayoutInflater(), new IconicsLayoutInflater(getDelegate()));
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_class_room);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-
-
 
         courseId = getIntent().getStringExtra(COURSE_ID);
         Course course = DataProvider.courseMap.get(courseId);
@@ -138,6 +144,96 @@ public class ClassRoomActivity extends AppCompatActivity {
         });
 
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+
+        swipeRefreshView = (SwipeRefreshLayout) findViewById(R.id.srl);
+        swipeRefreshView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                Log.d(TAG, "onRefresh: ");
+
+                String url = ConfigApp.SERVER + ConfigApp.CLASS_UPDATE_API;
+                url += "?";
+                url += "clid=" + courseId;
+
+                Log.d(TAG, "post: " + url);
+
+
+                AsyncHttpClient client = new AsyncHttpClient();
+
+                client.get(url, new JsonHttpResponseHandler() {
+
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                        if (statusCode == 200) {
+                            int status = 0;
+                            String info = "";
+                            Log.d(TAG, "onSuccess: " + response.toString());
+                            try {
+                                status = Integer.parseInt(response.get("status").toString());
+                                info = response.get("info").toString();
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+                            if (status == 1) {
+                                JSONArray data = new JSONArray();
+                                try {
+                                    data = (JSONArray) response.get("data");
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+                                Log.d(TAG, "onSuccess: " + data.length());
+
+                                JSONObject std = new JSONObject();
+
+                                ArrayList<Student> updated = new ArrayList<Student>();
+
+                                for (int i =0; i < data.length(); i++) {
+                                    try {
+                                        std = (JSONObject) data.get(i);
+
+                                        updated.add(new Student(std.get("stdid").toString(), std.getString("stdname").toString(),std.get("intime").toString(),std.get("outtime").toString()));
+
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+
+                                adapter.clear();
+
+
+
+
+
+
+                                for (int u = 0; u < updated.size(); u++) {
+                                    adapter.add(updated.get(u));
+                                }
+
+                                Snackbar.make(findViewById(R.id.listStudentView), "数据更新成功", Snackbar.LENGTH_SHORT)
+                                        .setAction("Action", null).show();
+
+                                adapter.notifyDataSetChanged();
+
+
+                            } else {
+                        Snackbar.make(findViewById(R.id.listStudentView), info, Snackbar.LENGTH_LONG)
+                                .setAction("Action", null).show();
+                            }
+
+                        } else {
+                            Snackbar.make(findViewById(R.id.listStudentView), " 数据更新失败，请稍后再试", Snackbar.LENGTH_SHORT)
+                                    .setAction("Action", null).show();
+                        }
+
+                        swipeRefreshView.setRefreshing(false);
+                    }
+                });
+
+            }
+        });
     }
 
     @Override

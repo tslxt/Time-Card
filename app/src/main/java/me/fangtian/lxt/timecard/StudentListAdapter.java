@@ -2,6 +2,7 @@ package me.fangtian.lxt.timecard;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,4 +51,8 @@ public class StudentListAdapter extends ArrayAdapter<Student> {
         return convertView;
     }
 
+//    @Override
+//    public void add(Student object) {
+//        students.add(new Student(object.getStudentId(),object.getStudentName(),object.getTimePresent(),object.getTimeLeft()));
+//    }
 }

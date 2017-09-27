@@ -20,6 +20,8 @@ public class ConfigApp {
 
     public static String MUL_CHECK_OUT_API = "/stdBatchCheck.html";
 
+    public static String CLASS_UPDATE_API = "/getAttendanceForApp.html";
+
     public static JSONObject data = new JSONObject();
 
     public static ArrayList<Exercise> exercises = new ArrayList<Exercise>();
