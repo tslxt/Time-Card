@@ -1,10 +1,12 @@
 package me.fangtian.lxt.timecard;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.List;
@@ -29,6 +31,9 @@ public class StudentListAdapter extends ArrayAdapter<Student> {
         }
 
         Student student = students.get(position);
+
+        LinearLayout bg = (LinearLayout) convertView.findViewById(R.id.item_student);
+        bg.setBackgroundColor(student.getSelected() == true? Color.LTGRAY:Color.TRANSPARENT);
 
         TextView idText = (TextView) convertView.findViewById(R.id.studentId);
         idText.setText(student.getStudentId());

@@ -18,6 +18,8 @@ public class ConfigApp {
 
     public static String CHECKIN_API = "/stdCheckin.html";
 
+    public static String MUL_CHECK_OUT_API = "/stdBatchCheck.html";
+
     public static JSONObject data = new JSONObject();
 
     public static ArrayList<Exercise> exercises = new ArrayList<Exercise>();

@@ -6,20 +6,20 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:paddingBottom="10dp"
-    android:weightSum="1">
-
+    android:weightSum="1"
+    android:id="@+id/item_student">
 
     <TextView
+        android:id="@+id/studentId"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="1198"
-        android:id="@+id/studentId"
-        android:textSize="20sp"
-        android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
+        android:layout_marginTop="10dp"
         android:layout_weight="0.25"
+        android:text="1198"
+        android:textSize="20sp"
         tools:ignore="HardcodedText" />
 
     <TextView

@@ -11,7 +11,9 @@ public class Student {
     private String timePresent;
     private String timeLeft;
 
-    public Student (String studentId, String studentName, String timePresent, String timeLeft) {
+    private boolean selected = false;
+
+    public Student(String studentId, String studentName, String timePresent, String timeLeft) {
         this.studentId = studentId;
         this.studentName = studentName;
         this.timePresent = timePresent;
@@ -22,8 +24,10 @@ public class Student {
     public String getStudentName() { return studentName; }
     public String getTimePresent() { return timePresent; }
     public String getTimeLeft() { return timeLeft; }
+    public boolean getSelected() { return selected; }
 
     public void setTimePresent(String timePresent) { this.timePresent = timePresent; }
     public void setTimeLeft(String timeLeft) { this.timeLeft = timeLeft; }
+    public void setSelected(Boolean selected) { this.selected = selected; }
 
 }
