@@ -9,10 +9,12 @@ import java.util.ArrayList;
  */
 public class ConfigApp {
 
-//    public static String SERVER = "http://www.fangtian.me/fangtian_ol/admin.php/Index";
-    public static String SERVER = "http://182.92.239.180/fangtian_ol_new/admin.php/Index";
+    public static String SERVER = "http://www.fangtian.me/fangtian_ol/admin.php/Index";
+//    public static String SERVER = "http://182.92.239.180/fangtian_ol_new/admin.php/Index";
 
     public static String PICSERVER = "http://101.200.124.30";
+
+//    public static String PICSERVER = "http://182.92.239.180";
 
     public static String LOGIN_API = "/teacherLoginOk.html";
 
