@@ -215,7 +215,14 @@ public class AnnotationActivity extends AppCompatActivity {
             @Override
             public void setPrimaryItem(ViewGroup container, int position, Object object) {
                 super.setPrimaryItem(container, position, object);
-                setTitle(ConfigApp.exercises.get(pager.getCurrentItem()).getStdname() + "提交的作业");
+                Log.d(TAG, "setPrimaryItem: " + position);
+                try {
+                    Log.d(TAG, "setPrimaryItem: " + pager.getCurrentItem());
+                    setTitle(ConfigApp.exercises.get(pager.getCurrentItem()).getStdname() + "提交的作业");
+                } catch (Exception e) {
+                    Log.d(TAG, "setPrimaryItem: " + e);
+                }
+
             }
         };
 

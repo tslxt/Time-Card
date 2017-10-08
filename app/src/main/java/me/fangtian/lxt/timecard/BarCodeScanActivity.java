@@ -1,8 +1,12 @@
 package me.fangtian.lxt.timecard;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Handler;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Toast;
@@ -23,7 +27,21 @@ public class BarCodeScanActivity extends AppCompatActivity implements ZXingScann
 
         action = getIntent().getStringExtra(ClassRoomActivity.ACTION);
 
+        if (Build.VERSION.SDK_INT>22){
+            if (ContextCompat.checkSelfPermission(BarCodeScanActivity.this,
+                    android.Manifest.permission.CAMERA)!= PackageManager.PERMISSION_GRANTED){
+                //先判断有没有权限 ，没有就在这里进行权限的申请
+                ActivityCompat.requestPermissions(BarCodeScanActivity.this,
+                        new String[]{android.Manifest.permission.CAMERA},1);
+
+            }
+        }
+
         mScannerView = new ZXingScannerView(this);   // Programmatically initialize the scanner view
+
+        if (Build.MODEL.equals("KNT-AL10")){
+            mScannerView.setAspectTolerance(0.5f);
+        }
         setContentView(mScannerView);                // Set the scanner view as the content view
     }
 

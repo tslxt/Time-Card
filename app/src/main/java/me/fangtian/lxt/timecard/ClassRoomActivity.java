@@ -382,7 +382,7 @@ public class ClassRoomActivity extends AppCompatActivity {
                 for (int i=0; i<students.size();i++) {
 //                Log.d("for loop", "students: " + i + students.get(i).getStudentId());
 //                Log.d("for loop", data.getStringExtra(RETURN_BARCODE) );
-                    if (Integer.parseInt(data.getStringExtra(RETURN_BARCODE)) == Integer.parseInt(students.get(i).getStudentId())) {
+                    if (data.getStringExtra(RETURN_BARCODE).equals(students.get(i).getStudentId())) {
                         position = i;
                     }
                 }
